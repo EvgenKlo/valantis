@@ -1,25 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../api/API";
 
-export const getAllProductsID = createAsyncThunk(
-  "table/getAllProductsID",
-  async ({ offset, limit }) => {
-    const result = await API.getProductsID(offset, limit);
+export const getProductsCount = createAsyncThunk(
+  "table/getProductsCount",
+  async () => {
+    const result = await API.getProductsCount();
+
     return result;
   }
 );
 
 export const getProductsInfo = createAsyncThunk(
   "table/getProductsInfo",
-  async (ids) => {
-    const result = await API.getProductsInfo(ids);
+  async ({ offset, limit }) => {
+    const ids = await API.getProductsID(offset, limit);
+
+    const result = await API.getProductsInfo(ids.result);
+
     return result;
   }
 );
 
 const initialState = {
+  productsCount: 0,
   table: [],
-  allProductsID: [],
   loader: true,
   offset: 0,
   limit: 50,
@@ -32,14 +36,17 @@ export const tableSlice = createSlice({
     toggleLoader: (state) => {
       state.loader = !state.loader;
     },
+    changeOffset: (state, action) => {
+      state.offset = action.payload;
+    },
   },
   extraReducers: (builder) => {
-    builder.addCase(getAllProductsID.fulfilled, (state, action) => {
-      state.loader = false;
+    builder.addCase(getProductsCount.fulfilled, (state, action) => {
       if (action.payload) {
-        state.allProductsID = action.payload.result;
+        state.productsCount = action.payload.result.length;
       }
     });
+
     builder.addCase(getProductsInfo.fulfilled, (state, action) => {
       state.loader = false;
 
@@ -54,6 +61,6 @@ export const tableSlice = createSlice({
   },
 });
 
-export const { toggleLoader } = tableSlice.actions;
+export const { toggleLoader, changeOffset } = tableSlice.actions;
 
 export default tableSlice.reducer;

@@ -1,18 +1,20 @@
+import styles from "./table.module.scss";
 import { useSelector } from "react-redux";
 
 const tableHeaderItems = [
-  { id: 1, name: "id" },
-  { id: 2, name: "Name" },
-  { id: 3, name: "Price" },
-  { id: 4, name: "Brand" },
+  { id: 1, name: "№" },
+  { id: 2, name: "id" },
+  { id: 3, name: "Name" },
+  { id: 4, name: "Price" },
+  { id: 5, name: "Brand" },
 ];
 
 const Table = () => {
-  const table = useSelector((state) => state.table.table);
+  const table = useSelector((state) => state.table);
 
   return (
     <div>
-      <table>
+      <table className={styles.table}>
         <thead>
           <tr>
             {tableHeaderItems.map((item) => (
@@ -21,9 +23,10 @@ const Table = () => {
           </tr>
         </thead>
         <tbody>
-          {table.length ? (
-            table.map((item) => (
+          {table.table.length ? (
+            table.table.map((item, index) => (
               <tr key={item.id}>
+                <td>{index + 1 + table.offset}</td>
                 <td>{item.id}</td>
                 <td>{item.product}</td>
                 <td>{item.price}</td>

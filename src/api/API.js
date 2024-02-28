@@ -7,6 +7,30 @@ class API {
     this.url = import.meta.env.VITE_URL;
   }
 
+  async getProductsCount() {
+    const authString = `${this.password}_${getTimeStamp()}`;
+
+    try {
+      const data = await fetch(this.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth": md5(authString),
+        },
+        body: JSON.stringify({
+          action: "get_ids",
+        }),
+      });
+
+      const response = await data.json();
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      this.getProductsCount();
+    }
+  }
+
   async getProductsID(offset, limit) {
     const authString = `${this.password}_${getTimeStamp()}`;
 
@@ -28,6 +52,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
+      this.getProductsID(offset, limit);
     }
   }
 
@@ -52,6 +77,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
+      this.getProductsInfo(ids);
     }
   }
 }

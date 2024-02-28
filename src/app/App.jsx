@@ -3,32 +3,26 @@ import Loader from "../UI/Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
-  getAllProductsID,
+  getProductsCount,
   getProductsInfo,
   toggleLoader,
 } from "../store/slices/tableSlice";
+import Pagination from "../UI/Pagination/Pagination";
 
 const App = () => {
-  const allId = useSelector((state) => state.table.allProductsID);
-
   const state = useSelector((state) => state.table);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(getProductsCount());
     dispatch(toggleLoader());
-    dispatch(getAllProductsID({ offset: state.offset, limit: state.limit }));
+    dispatch(getProductsInfo({ offset: state.offset, limit: state.limit }));
   }, []);
-
-  useEffect(() => {
-    if (allId.length) {
-      dispatch(toggleLoader());
-      dispatch(getProductsInfo(allId));
-    }
-  }, [allId]);
 
   return (
     <>
+      <Pagination />
       <Table />
       <Loader />
     </>
