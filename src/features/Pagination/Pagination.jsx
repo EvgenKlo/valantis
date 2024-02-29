@@ -15,15 +15,19 @@ const Pagination = () => {
 
   const dispatch = useDispatch();
 
+  const handlePressPaginationButton = () => {
+    dispatch(toggleLoader(false));
+    dispatch(getProductsInfo({ offset, limit: state.limit }));
+    dispatch(changeOffset(offset));
+  };
+
   return (
     <div className={styles.paginationContainer}>
       <button
         disabled={!state.offset}
         onClick={() => {
           offset = 0;
-          dispatch(toggleLoader(false));
-          dispatch(getProductsInfo({ offset, limit: state.limit }));
-          dispatch(changeOffset(offset));
+          handlePressPaginationButton();
         }}
       >
         В начало
@@ -32,9 +36,7 @@ const Pagination = () => {
         disabled={!state.offset}
         onClick={() => {
           offset = offset - state.limit;
-          dispatch(toggleLoader(false));
-          dispatch(getProductsInfo({ offset, limit: state.limit }));
-          dispatch(changeOffset(offset));
+          handlePressPaginationButton();
         }}
       >
         {"<<"}
@@ -44,9 +46,7 @@ const Pagination = () => {
         disabled={state.limit * pageNumber > state.productsCount}
         onClick={() => {
           offset = offset + state.limit;
-          dispatch(toggleLoader(false));
-          dispatch(getProductsInfo({ offset, limit: state.limit }));
-          dispatch(changeOffset(offset));
+          handlePressPaginationButton();
         }}
       >
         {">>"}
@@ -55,9 +55,7 @@ const Pagination = () => {
         disabled={state.limit * pageNumber > state.productsCount}
         onClick={() => {
           offset = Math.floor(state.productsCount / state.limit) * state.limit;
-          dispatch(toggleLoader(false));
-          dispatch(getProductsInfo({ offset, limit: state.limit }));
-          dispatch(changeOffset(offset));
+          handlePressPaginationButton();
         }}
       >
         В конец

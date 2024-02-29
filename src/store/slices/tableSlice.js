@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import API from "../../api/API";
+import API from "../../shared/api/API";
 
 export const getProductsCount = createAsyncThunk(
   "table/getProductsCount",

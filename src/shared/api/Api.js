@@ -80,6 +80,31 @@ class API {
       this.getProductsInfo(ids);
     }
   }
+
+  async getFilterProducts(/* param */) {
+    const authString = `${this.password}_${getTimeStamp()}`;
+
+    try {
+      const data = await fetch(this.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth": md5(authString),
+        },
+        body: JSON.stringify({
+          action: "filter",
+          params: { brand: "Piaget", price: 23363 },
+        }),
+      });
+
+      const response = await data.json();
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      // this.getFilterProducts(param);
+    }
+  }
 }
 
 export default new API();

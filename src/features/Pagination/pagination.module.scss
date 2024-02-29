@@ -1,8 +1,11 @@
 .paginationContainer {
   display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .pageNumber {
   padding-left: 10px;
   padding-right: 10px;
+  margin: 0;
 }

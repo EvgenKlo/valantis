@@ -1,5 +1,4 @@
-import Table from "../UI/Table/Table";
-import Loader from "../UI/Loader/Loader";
+import Loader from "../shared/UI/Loader/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
@@ -7,7 +6,7 @@ import {
   getProductsInfo,
   toggleLoader,
 } from "../store/slices/tableSlice";
-import Pagination from "../UI/Pagination/Pagination";
+import ProductList from "../widgets/ProductsList/ProductList";
 
 const App = () => {
   const state = useSelector((state) => state.table);
@@ -22,8 +21,7 @@ const App = () => {
 
   return (
     <>
-      <Pagination />
-      <Table />
+      <ProductList />
       <Loader />
     </>
   );
