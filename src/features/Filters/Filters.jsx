@@ -1,11 +1,22 @@
 import { useState } from "react";
-import Api from "../../shared/api/Api";
 import styles from "./filters.module.scss";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  changeOffset,
+  getFilterProducts,
+  getProductsInfo,
+  removeFilterProductsCount,
+  toggleLoader,
+} from "../../store/slices/tableSlice";
 
 const Filters = () => {
   const [filter, setFilter] = useState("product");
 
   const [inputValue, setInputValue] = useState("");
+
+  const state = useSelector((state) => state.table);
+
+  const dispatch = useDispatch();
 
   return (
     <div className={styles.filtersContainer}>
@@ -23,23 +34,41 @@ const Filters = () => {
           <option value="price">цене</option>
           <option value="brand">бренду</option>
         </select>
-        <input
-          type={filter === "product" || filter === "brand" ? "text" : "number"}
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-          }}
-        />
-        <button
-          onClick={async () => {
-            // const result = await Api.getFilterProducts(filter);
-            // console.log(result);
-            console.log(inputValue);
+        <form
+          className={styles.form}
+          onSubmit={(e) => {
+            e.preventDefault();
+            dispatch(toggleLoader());
+            dispatch(changeOffset(0));
+            dispatch(removeFilterProductsCount());
+            dispatch(getFilterProducts({ param: filter, value: inputValue }));
           }}
         >
-          Применить
-        </button>
+          <input
+            required
+            type={
+              filter === "product" || filter === "brand" ? "text" : "number"
+            }
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+          />
+          <input type="submit" value="Применить" />
+        </form>
       </div>
+      <button
+        disabled={state.filterProductsCount === null}
+        onClick={() => {
+          setInputValue("");
+          dispatch(toggleLoader());
+          dispatch(changeOffset(0));
+          dispatch(getProductsInfo(0, state.limit));
+          dispatch(removeFilterProductsCount());
+        }}
+      >
+        Сбросить фильтр
+      </button>
     </div>
   );
 };

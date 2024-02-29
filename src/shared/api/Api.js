@@ -27,7 +27,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      this.getProductsCount();
+      return error;
     }
   }
 
@@ -52,7 +52,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      this.getProductsID(offset, limit);
+      return error;
     }
   }
 
@@ -77,11 +77,11 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      this.getProductsInfo(ids);
+      return error;
     }
   }
 
-  async getFilterProducts(/* param */) {
+  async getFilterProducts(param, value) {
     const authString = `${this.password}_${getTimeStamp()}`;
 
     try {
@@ -93,7 +93,7 @@ class API {
         },
         body: JSON.stringify({
           action: "filter",
-          params: { brand: "Piaget", price: 23363 },
+          params: { [param]: param === "price" ? value * 1 : value },
         }),
       });
 
@@ -102,7 +102,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      // this.getFilterProducts(param);
+      return error;
     }
   }
 }

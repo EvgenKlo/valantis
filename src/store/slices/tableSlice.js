@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import API from "../../shared/api/API";
+import API from "../../shared/api/Api";
 
 export const getProductsCount = createAsyncThunk(
   "table/getProductsCount",
@@ -21,8 +21,33 @@ export const getProductsInfo = createAsyncThunk(
   }
 );
 
+export const getFilterProducts = createAsyncThunk(
+  "table/getFilterProductsInfo",
+  async ({ param, value }) => {
+    const ids = await API.getFilterProducts(param, value);
+
+    const products = await API.getProductsInfo(ids.result.slice(0, 50));
+
+    return { ids, products };
+  }
+);
+
+export const getFilterProductsPagination = createAsyncThunk(
+  "table/getFilterProductsPagination",
+  async ({ offset, limit }, thunkAPI) => {
+    const state = thunkAPI.getState();
+
+    const ids = state.table.filterProductsCount.slice(offset, offset + limit);
+
+    const products = await API.getProductsInfo(ids);
+
+    return products;
+  }
+);
+
 const initialState = {
   productsCount: 0,
+  filterProductsCount: null,
   table: [],
   loader: true,
   offset: 0,
@@ -38,6 +63,9 @@ export const tableSlice = createSlice({
     },
     changeOffset: (state, action) => {
       state.offset = action.payload;
+    },
+    removeFilterProductsCount: (state) => {
+      state.filterProductsCount = null;
     },
   },
   extraReducers: (builder) => {
@@ -58,9 +86,38 @@ export const tableSlice = createSlice({
         state.table = uniqueChain;
       }
     });
+
+    builder.addCase(getFilterProducts.fulfilled, (state, action) => {
+      state.loader = false;
+
+      if (action.payload) {
+        const uniqueChain = Array.from(
+          new Set(action.payload.products.result.map((item) => item.id))
+        ).map((id) =>
+          action.payload.products.result.find((item) => item.id === id)
+        );
+
+        state.filterProductsCount = action.payload.ids.result;
+
+        state.table = uniqueChain;
+      }
+    });
+
+    builder.addCase(getFilterProductsPagination.fulfilled, (state, action) => {
+      state.loader = false;
+
+      if (action.payload) {
+        const uniqueChain = Array.from(
+          new Set(action.payload.result.map((item) => item.id))
+        ).map((id) => action.payload.result.find((item) => item.id === id));
+
+        state.table = uniqueChain;
+      }
+    });
   },
 });
 
-export const { toggleLoader, changeOffset } = tableSlice.actions;
+export const { toggleLoader, changeOffset, removeFilterProductsCount } =
+  tableSlice.actions;
 
 export default tableSlice.reducer;

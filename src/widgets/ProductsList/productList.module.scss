@@ -1,3 +1,9 @@
 .container {
   padding: 8px;
 }
+
+.paginationOnly {
+  padding: 16px;
+  display: flex;
+  justify-content: right;
+}

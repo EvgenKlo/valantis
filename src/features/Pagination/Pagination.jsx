@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeOffset,
+  getFilterProductsPagination,
   getProductsInfo,
   toggleLoader,
 } from "../../store/slices/tableSlice";
@@ -17,8 +18,13 @@ const Pagination = () => {
 
   const handlePressPaginationButton = () => {
     dispatch(toggleLoader(false));
-    dispatch(getProductsInfo({ offset, limit: state.limit }));
-    dispatch(changeOffset(offset));
+    if (state.filterProductsCount === null) {
+      dispatch(getProductsInfo({ offset, limit: state.limit }));
+      dispatch(changeOffset(offset));
+    } else {
+      dispatch(getFilterProductsPagination({ offset, limit: state.limit }));
+      dispatch(changeOffset(offset));
+    }
   };
 
   return (
@@ -43,7 +49,12 @@ const Pagination = () => {
       </button>
       <p className={styles.pageNumber}>{pageNumber}</p>
       <button
-        disabled={state.limit * pageNumber > state.productsCount}
+        disabled={
+          state.limit * pageNumber >
+          (state.filterProductsCount === null
+            ? state.productsCount
+            : state.filterProductsCount.length)
+        }
         onClick={() => {
           offset = offset + state.limit;
           handlePressPaginationButton();
@@ -52,9 +63,19 @@ const Pagination = () => {
         {">>"}
       </button>
       <button
-        disabled={state.limit * pageNumber > state.productsCount}
+        disabled={
+          state.limit * pageNumber >
+          (state.filterProductsCount === null
+            ? state.productsCount
+            : state.filterProductsCount.length)
+        }
         onClick={() => {
-          offset = Math.floor(state.productsCount / state.limit) * state.limit;
+          offset =
+            Math.floor(
+              state.filterProductsCount === null
+                ? state.productsCount / state.limit
+                : state.filterProductsCount.length / state.limit
+            ) * state.limit;
           handlePressPaginationButton();
         }}
       >

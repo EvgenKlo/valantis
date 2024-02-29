@@ -7,4 +7,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  gap: 4px;
 }
