@@ -4,7 +4,11 @@ import API from "../../shared/api/Api";
 export const getProductsCount = createAsyncThunk(
   "table/getProductsCount",
   async () => {
-    const result = await API.getProductsCount();
+    let result = null;
+
+    while (!result) {
+      result = await API.getProductsCount();
+    }
 
     return result;
   }
@@ -13,20 +17,36 @@ export const getProductsCount = createAsyncThunk(
 export const getProductsInfo = createAsyncThunk(
   "table/getProductsInfo",
   async ({ offset, limit }) => {
-    const ids = await API.getProductsID(offset, limit);
+    let ids = null;
 
-    const result = await API.getProductsInfo(ids.result);
+    while (!ids) {
+      ids = await API.getProductsID(offset, limit);
+    }
 
-    return result;
+    let result = null;
+
+    while (!result) {
+      result = await API.getProductsInfo(ids.result);
+    }
+
+    return { result, offset };
   }
 );
 
 export const getFilterProducts = createAsyncThunk(
   "table/getFilterProductsInfo",
   async ({ param, value }) => {
-    const ids = await API.getFilterProducts(param, value);
+    let ids = null;
 
-    const products = await API.getProductsInfo(ids.result.slice(0, 50));
+    while (!ids) {
+      ids = await API.getFilterProducts(param, value);
+    }
+
+    let products = null;
+
+    while (!products) {
+      products = await API.getProductsInfo(ids.result.slice(0, 50));
+    }
 
     return { ids, products };
   }
@@ -39,9 +59,13 @@ export const getFilterProductsPagination = createAsyncThunk(
 
     const ids = state.table.filterProductsCount.slice(offset, offset + limit);
 
-    const products = await API.getProductsInfo(ids);
+    let products = null;
 
-    return products;
+    while (!products) {
+      products = await API.getProductsInfo(ids);
+    }
+
+    return { products, offset };
   }
 );
 
@@ -80,10 +104,14 @@ export const tableSlice = createSlice({
 
       if (action.payload) {
         const uniqueChain = Array.from(
-          new Set(action.payload.result.map((item) => item.id))
-        ).map((id) => action.payload.result.find((item) => item.id === id));
+          new Set(action.payload.result.result.map((item) => item.id))
+        ).map((id) =>
+          action.payload.result.result.find((item) => item.id === id)
+        );
 
         state.table = uniqueChain;
+
+        state.offset = action.payload.offset;
       }
     });
 
@@ -108,10 +136,14 @@ export const tableSlice = createSlice({
 
       if (action.payload) {
         const uniqueChain = Array.from(
-          new Set(action.payload.result.map((item) => item.id))
-        ).map((id) => action.payload.result.find((item) => item.id === id));
+          new Set(action.payload.products.result.map((item) => item.id))
+        ).map((id) =>
+          action.payload.products.result.find((item) => item.id === id)
+        );
 
         state.table = uniqueChain;
+
+        state.offset = action.payload.offset;
       }
     });
   },

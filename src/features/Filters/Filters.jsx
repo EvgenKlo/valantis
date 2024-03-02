@@ -20,7 +20,11 @@ const Filters = () => {
 
   return (
     <div className={styles.filtersContainer}>
-      <h2>Фильтровать список по:</h2>
+      <h2 className={styles.title}>
+        Фильтровать
+        <br />
+        список по:
+      </h2>
       <div className={styles.buttonsContainer}>
         <select
           name="filter"
@@ -62,8 +66,7 @@ const Filters = () => {
         onClick={() => {
           setInputValue("");
           dispatch(toggleLoader());
-          dispatch(changeOffset(0));
-          dispatch(getProductsInfo(0, state.limit));
+          dispatch(getProductsInfo({ offset: 0, limit: state.limit }));
           dispatch(removeFilterProductsCount());
         }}
       >

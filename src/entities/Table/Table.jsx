@@ -35,9 +35,12 @@ const Table = () => {
             ))
           ) : (
             <tr>
-              {tableHeaderItems.map((item) => (
-                <td key={item.id}>Пусто</td>
-              ))}
+              <td
+                colSpan={tableHeaderItems.length}
+                className={styles.emptyTable}
+              >
+                Список пуст
+              </td>
             </tr>
           )}
         </tbody>

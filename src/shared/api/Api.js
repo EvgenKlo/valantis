@@ -27,7 +27,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      return error;
+      return null;
     }
   }
 
@@ -52,7 +52,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      return error;
+      return null;
     }
   }
 
@@ -77,7 +77,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      return error;
+      return null;
     }
   }
 
@@ -102,7 +102,7 @@ class API {
       return response;
     } catch (error) {
       console.log(error);
-      return error;
+      return null;
     }
   }
 }

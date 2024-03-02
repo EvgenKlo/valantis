@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  changeOffset,
   getFilterProductsPagination,
   getProductsInfo,
   toggleLoader,
@@ -20,10 +19,8 @@ const Pagination = () => {
     dispatch(toggleLoader(false));
     if (state.filterProductsCount === null) {
       dispatch(getProductsInfo({ offset, limit: state.limit }));
-      dispatch(changeOffset(offset));
     } else {
       dispatch(getFilterProductsPagination({ offset, limit: state.limit }));
-      dispatch(changeOffset(offset));
     }
   };
 
